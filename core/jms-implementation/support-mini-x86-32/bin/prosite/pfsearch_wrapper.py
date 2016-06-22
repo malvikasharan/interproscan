@@ -24,22 +24,22 @@ def clean_output(lines):
     if 'match_nb' in line:
       line = re.sub('match_nb=\S+\s+match_type=\S+\s+', '', line)
       if 'match_nb' in line:
-        #print 'regex failed ... ', line
+        #print('regex failed ... ', line)
         line = re.sub('match_nb=\S+\s+', '', line)
         line = re.sub('match_type=\S+\s+', '', line)
-        #print 'regex may hav failed, print line again: ', line
-	#else print 'regex worked ... ', line
+        #print('regex may hav failed, print line again: ', line)
+	#else print('regex worked ... ', line)
     if formatted_lines and len(line) > 0 and line[0] == '>':
       formatted_lines += '\n'
       formatted_lines += line
     else:
       formatted_lines += line
-  #print formatted_lines
+  #print(formatted_lines)
   if not formatted_lines.strip():
     formatted_lines = ''
   else:
     formatted_lines += '\n'
-  #print formatted_lines
+  #print(formatted_lines)
   return formatted_lines
 
 ##get the hamap profiles from the
@@ -58,13 +58,13 @@ def get_hamap_profile(profiles_list_filename):
                 seq_id = m.group(1)
                 profile = m.group(3)
                 profile_path = model_dir + '/' + profile + ".prf"
-                #print line
+                #print(line)
 
                 if profile in profiles:
                     profiles[profile].extend([seq_id])
                 else:
                     profiles[profile] = [profile_path, seq_id]
-                    #print profiles[profile]
+                    #print(profiles[profile])
     return profiles
 
 def get_sequences(fasta_file):
@@ -87,19 +87,19 @@ def get_sequences(fasta_file):
 
 def get_sequences_for_profile(key_list, seqs_dict):
     sequences = ''
-    #print len(key_list),':', key_list
+    #print(len(key_list),':', key_list)
     for key in key_list:
         if key in seqs_dict:
-            #print "key found : ", key
+            #print("key found : ", key)
             value = seqs_dict[key]
             sequences += '>' + key + '\n' + value
             if not value.endswith('\n'):
                 sequences += '\n'
-	    #print 'ok', sequences
+	    #print('ok', sequences)
         else:
-            print "key not found : ", key
+            print("key not found : ", key)
 
-    #print 'ok', sequences
+    #print('ok', sequences)
     return sequences
 
 def create_temp_file(filename):
@@ -120,13 +120,13 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, stats_filename, command_i
         sequence_ids = profiles[prf][1:]
         get_seq_start_time = time.time()
         input_fasta_sequences = get_sequences_for_profile(sequence_ids, seqs_dict)
-        #print input_fasta_sequences
+        #print(input_fasta_sequences)
         temp_file = create_temp_file(prf)
-        #print 'temp file is ', temp_file
+        #print('temp file is ', temp_file)
         write_to_file(temp_file, input_fasta_sequences)
         get_seq_end_time = time.time()
         time_to_get_seqences = get_seq_end_time - get_seq_start_time
-        #print 'time to get ', len(sequence_ids), 'sequences for ', prf, ': ', time_to_get_seqences
+        #print('time to get ', len(sequence_ids), 'sequences for ', prf, ': ', time_to_get_seqences)
         get_seq_time += time_to_get_seqences
         temp_file_list.append(temp_file)
 
@@ -135,7 +135,7 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, stats_filename, command_i
         #comd_to_run.extend([profiles[prf][0],fasta_file])
         comd_to_run.extend([profiles[prf][0],temp_file])
         cmd_string = ' '.join(comd_to_run)
-        #print "command to run: ",  cmd_string
+        #print("command to run: ",  cmd_string)
         count = count  + 1
         output = subprocess.check_output(comd_to_run)
         output = clean_output(output)
@@ -146,7 +146,7 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, stats_filename, command_i
         #    break
 
     for tempfile in temp_file_list:
-        #print tempfile
+        #print(tempfile)
         os.unlink(tempfile)
 
     with open(stats_filename, 'w') as stats_file:
@@ -172,7 +172,7 @@ if __name__ == "__main__":
         command_index = 6
 
         pfsearch_cmd = ' '.join(sys.argv)
-        #print pfsearch_cmd
+        #print(pfsearch_cmd)
 
         #create the output file in case we don't have any matches
         open(output_file, 'a').close()
@@ -194,9 +194,9 @@ if __name__ == "__main__":
             pfsearch_cmd_run_count = run_pfsearch_binary(arg_list, profiles,seqs_dict, stats_filename, command_index)
 
     except:
-        print (sys.version)
-        print ("Unexpected error: ")
-        print (sys.exc_info())
+        print(sys.version)
+        print("Unexpected error: ")
+        print(sys.exc_info())
 
 
 
